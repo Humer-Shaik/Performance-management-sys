@@ -8,14 +8,25 @@
     "test": "vitest run",
     "test:unit": "vitest run src",
     "test:db": "vitest run tests",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:seed": "tsx scripts/seed.ts",
+    "jobs": "tsx scripts/jobs.ts",
+    "setup": "tsx scripts/setup-local.ts"
   },
   "dependencies": {
-    "pg": "^8.13.1"
+    "next": "^15.1.6",
+    "pg": "^8.13.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"

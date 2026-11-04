@@ -33,24 +33,49 @@ Each command loads the actor, checks the plan's rules, and writes in one transac
 | `owner.ts` | `rawView` (goals, subtasks, assignments, changes, requests, ratings, blockers, disputes, scores, audit), `exportView` (CSV), `addOwnerNote` |
 | `scoring.ts` | `openPeriod` (HR), `computeDrafts` (nightly), `lockPeriod` (quarter end), `scoreBreakdown` (who may see it). Runs as `pms_scoring`, the only role that can write scores. |
 
-## Running
+## Running it on your computer
+
+You need Node.js 22 and PostgreSQL 16 (on a Mac: `brew install node postgresql@16 && brew services start postgresql@16`).
 
 ```sh
 npm install
-npm run test:unit                                   # scoring and risk rules
-TEST_ADMIN_URL=postgres://postgres:pw@localhost/postgres npm run test:db   # database safeguards (PostgreSQL 16)
-DATABASE_URL=postgres://owner:pw@host/db npm run db:migrate
+npm run setup      # creates the "pms" database, its login roles and .env.local
+npm run db:seed    # demo org with the plan's two example goals
+npm run dev        # open http://localhost:3000 and pick a person to sign in as
 ```
 
-Every write must say who is acting and why, inside the transaction:
+`npm run setup` connects as your local PostgreSQL superuser (`ADMIN_URL=postgres://you@localhost/postgres` to override).
+`npm run jobs` runs the nightly jobs once: risk checks, escalations, draft scores, quarter locks and rescoring after disputes. Schedule it nightly in production.
+
+Sign-in is a demo picker (`DEMO_LOGIN=1`) until company SSO is chosen.
+
+### Tests
+
+```sh
+npm run typecheck
+TEST_ADMIN_URL=postgres://you@localhost/postgres npm test
+```
+
+Every write must say who is acting and why, inside the transaction; the server commands do this for you:
 
 ```sql
 SELECT set_config('app.actor_id', '<user uuid>', true), set_config('app.reason', '<why>', true);
 ```
+
+## Screens (`app/`)
+
+| Page | Who | What |
+| --- | --- | --- |
+| `/me` | Everyone | My subtasks and status buttons, blockers, requests for more time, ratings, score breakdown, disputes, peer feedback |
+| `/lead` | Team leads | Goals with progress and risk, add subtasks, review, rate, reopen, extend, re-estimate, reassign, answer blockers, own accountability report |
+| `/manager` | Managers | Create and move goals, approvals, disputed blockers, ratings to review, disputes to decide, lead reports |
+| `/hr` | HR | Open quarters, disputes to decide, every lead's accountability report |
+| `/owner` | Owner, admins | Company overview, every raw record type, audit log, CSV export, comments and review requests |
 
 ## Next milestones
 
 2. Work: goals, transfers, subtasks, revisions with approvals, status events, blockers (commands done; screens come with milestone 5).
 3. Ratings and scoring: rubric forms, collaboration form, nightly score job, breakdown page, quarter lock.
 4. Disputes and approvals (done; screens come with milestone 5).
-5. Dashboards per role, risk job and notifications, accountability reports, export.
+5. Dashboards per role, risk job and notifications, accountability reports, export (done).
+6. Company sign-in (SSO) and hosting.
