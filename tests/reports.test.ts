@@ -87,7 +87,7 @@ describe("owner raw view", () => {
     const ext = subs.find((s) => s.title === "8pt" && s.current_due !== s.original_due);
     expect(ext).toBeDefined();
     const blockers = await rawView(env.app, u.owner!, "blockers");
-    expect(blockers[0].events.map((e: any) => e.kind)).toEqual(["disputed", "upheld"]);
+    expect(blockers[0]!.events.map((e: any) => e.kind)).toEqual(["disputed", "upheld"]);
     expect((await rawView(env.app, u.owner!, "audit")).length).toBeGreaterThan(20);
   });
 
