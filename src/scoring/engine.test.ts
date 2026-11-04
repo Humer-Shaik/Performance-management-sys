@@ -86,6 +86,13 @@ describe("computeScore", () => {
     expect(signal(r, "delivery").explanation).toBe("6 of 6 approved points done");
   });
 
+  it("counts reassigned-away work for delivery only", () => {
+    const r = computeScore(base({ subtasks: [...base().subtasks, task({ id: "gone", points: 8, creditShare: 0.25, deliveredBy: false, status: "in_progress", doneAt: undefined })] }), DEFAULT_RULES);
+    expect(signal(r, "delivery").explanation).toBe("11 of 11 approved points done");
+    expect(signal(r, "timeliness").tasks.find((t) => t.subtaskId === "gone")?.counted).toBe(false);
+    expect(signal(r, "quality").tasks.find((t) => t.subtaskId === "gone")?.counted).toBe(false);
+  });
+
   it("measures timeliness against both deadlines and scores the approved one", () => {
     const r = computeScore(
       base({

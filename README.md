@@ -15,7 +15,7 @@ hash-chained audit trail.
 | `src/scoring/` | The scoring engine: a pure function of inputs and one rule version, with a full per-task breakdown and "insufficient data" handling. |
 | `src/domain/progress.ts` | Effort-weighted progress and deadline risk levels. |
 
-## Milestone 2: work commands (`src/server`)
+## Server commands (`src/server`)
 
 Each command loads the actor, checks the plan's rules, and writes in one transaction with the actor and reason set for the audit log.
 
@@ -26,6 +26,8 @@ Each command loads the actor, checks the plan's rules, and writes in one transac
 | `requests.ts` | `decideChangeRequest` (never by the requester), `escalateRefusedRequest` |
 | `blockers.ts` | `raiseBlocker`, `acknowledgeBlocker`, `disputeBlocker`, `decideBlocker` (manager only), `resolveBlocker`, `escalateLongBlockers` (scheduled job) |
 | `policy.ts` | Who can do what, per role and team |
+| `ratings.ts` | `rateQuality` (evidence rules for 1, 2, 4, 5), `changeQualityRating` (new version with reason, employee told), `reviewQualityRating` (manager), `rateCollaboration` (lead or teammates, examples required, raters never shown) |
+| `scoring.ts` | `openPeriod` (HR), `computeDrafts` (nightly), `lockPeriod` (quarter end), `scoreBreakdown` (who may see it). Runs as `pms_scoring`, the only role that can write scores. |
 
 ## Running
 

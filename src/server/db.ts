@@ -3,7 +3,7 @@ import pg from "pg";
 // Dates (not timestamps) come back as YYYY-MM-DD strings, never shifted by time zone.
 pg.types.setTypeParser(1082, (v: string) => v);
 
-export type Db = pg.PoolClient | pg.Client;
+export type Db = pg.Pool | pg.PoolClient | pg.Client;
 
 /**
  * Runs fn in one transaction with the actor and reason set, so every write
