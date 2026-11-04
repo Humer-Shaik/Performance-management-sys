@@ -16,6 +16,8 @@ export interface RuleSet {
   };
   /** Minimum days between assignment and due date, per effort level. Shorter needs a reason and is flagged. */
   leadTimeDays: Record<EffortPoints, number>;
+  /** Dispute time limits (configurable defaults from the plan). */
+  disputes: { fileWithinDays: number; decideWithinWorkingDays: number };
 }
 
 export const DEFAULT_RULES: RuleSet = {
@@ -23,6 +25,7 @@ export const DEFAULT_RULES: RuleSet = {
   weights: { delivery: 0.4, timeliness: 0.3, quality: 0.2, collaboration: 0.1 },
   minimums: { deliveryPoints: 5, timelinessTasks: 3, qualityRatings: 3, collaborationPeers: 2 },
   leadTimeDays: { 1: 1, 2: 2, 3: 3, 5: 5, 8: 10 },
+  disputes: { fileWithinDays: 14, decideWithinWorkingDays: 10 },
 };
 
 export type SubtaskStatus = "not_started" | "in_progress" | "blocked" | "in_review" | "done";
