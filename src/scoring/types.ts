@@ -57,6 +57,12 @@ export interface SubtaskInput {
   blockers: BlockerInput[];
   /** Times reopened after Done while delivered by this employee. */
   reopenCount: number;
+  /**
+   * False when the subtask was reassigned away from this employee after they
+   * worked on it: their share counts for delivery only, and timeliness and
+   * quality belong to whoever delivered it. Defaults to true.
+   */
+  deliveredBy?: boolean;
   /** Latest version of the lead's quality rating, if rated. */
   qualityRating?: { score: 1 | 2 | 3 | 4 | 5; ratingId: string };
 }

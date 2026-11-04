@@ -14,6 +14,7 @@ import type {
 } from "./types";
 
 const DAY_MS = 86_400_000;
+const REASSIGNED = "reassigned before it was finished; your share counts for delivery only";
 const round2 = (n: number) => Math.round(n * 100) / 100;
 /** Maps a 1-5 rating to 0-100. */
 const ratingTo100 = (avg: number) => ((avg - 1) / 4) * 100;
@@ -66,8 +67,10 @@ function delivery(input: ScoreInput, rules: RuleSet): Omit<SignalResult, "weight
     if (!t.inScope) return { subtaskId: t.id, title: t.title, counted: false, excludedReason: "removed by approved scope change", detail: {} };
     const pts = t.points * t.creditShare;
     assigned += pts;
-    if (t.status === "done") done += pts;
-    return { subtaskId: t.id, title: t.title, counted: true, detail: { points: t.points, originalPoints: t.originalPoints, creditShare: t.creditShare, done: t.status === "done" } };
+    // A share kept after reassignment is credit for work already done.
+    const isDone = t.status === "done" || t.deliveredBy === false;
+    if (isDone) done += pts;
+    return { subtaskId: t.id, title: t.title, counted: true, detail: { points: t.points, originalPoints: t.originalPoints, creditShare: t.creditShare, done: isDone } };
   });
   if (assigned < rules.minimums.deliveryPoints) {
     return { name: "delivery", status: "insufficient_data", value: null, tasks, explanation: `${round2(assigned)} points assigned; at least ${rules.minimums.deliveryPoints} needed` };
@@ -85,6 +88,7 @@ function timeliness(input: ScoreInput, rules: RuleSet): Omit<SignalResult, "weig
   const tasks: TaskLine[] = input.subtasks.map((t: SubtaskInput) => {
     const base = { subtaskId: t.id, title: t.title };
     if (!t.inScope) return { ...base, counted: false, excludedReason: "removed by approved scope change", detail: {} };
+    if (t.deliveredBy === false) return { ...base, counted: false, excludedReason: REASSIGNED, detail: {} };
     const finishedAt = t.status === "done" && t.doneAt ? Date.parse(t.doneAt) : undefined;
     const revisedDue = endOfDay(t.revisedDue);
     const originalDue = endOfDay(t.originalDue);
@@ -131,6 +135,7 @@ function quality(input: ScoreInput, rules: RuleSet): Omit<SignalResult, "weight"
   const scores: number[] = [];
   const tasks: TaskLine[] = input.subtasks.map((t) => {
     const base = { subtaskId: t.id, title: t.title };
+    if (t.deliveredBy === false) return { ...base, counted: false, excludedReason: REASSIGNED, detail: {} };
     if (t.status !== "done" && t.reopenCount === 0) return { ...base, counted: false, excludedReason: "not done", detail: {} };
     const reopens = Array<number>(t.reopenCount).fill(1);
     if (!t.qualityRating && reopens.length === 0) return { ...base, counted: false, excludedReason: "not rated yet", detail: {} };
