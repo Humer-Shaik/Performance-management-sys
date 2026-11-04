@@ -28,6 +28,9 @@ Each command loads the actor, checks the plan's rules, and writes in one transac
 | `policy.ts` | Who can do what, per role and team |
 | `ratings.ts` | `rateQuality` (evidence rules for 1, 2, 4, 5), `changeQualityRating` (new version with reason, employee told), `reviewQualityRating` (manager), `rateCollaboration` (lead or teammates, examples required, raters never shown) |
 | `disputes.ts` | `fileDispute` (affected employee only, 14-day window, challenged person and reviewer found from the record), `decideDispute` (never the challenged person; applies the correction as a new revision), `rescoreAfterDisputes` (revised locked score, old one kept), `escalateOverdueDisputes` (to head of HR after 10 working days) |
+| `risk.ts` | `checkRisks` job: daily for goals of 30 days or less, weekly otherwise; level changes logged in `risk_checks` and notified (owner for overdue high-priority goals) |
+| `reports.ts` | `leadReport`, `managerReport`: workload, task difficulty, deadline fairness, rating spread, blocker handling, dispute record, goal delivery, with the plan's default flags |
+| `owner.ts` | `rawView` (goals, subtasks, assignments, changes, requests, ratings, blockers, disputes, scores, audit), `exportView` (CSV), `addOwnerNote` |
 | `scoring.ts` | `openPeriod` (HR), `computeDrafts` (nightly), `lockPeriod` (quarter end), `scoreBreakdown` (who may see it). Runs as `pms_scoring`, the only role that can write scores. |
 
 ## Running
