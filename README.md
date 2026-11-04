@@ -15,6 +15,18 @@ hash-chained audit trail.
 | `src/scoring/` | The scoring engine: a pure function of inputs and one rule version, with a full per-task breakdown and "insufficient data" handling. |
 | `src/domain/progress.ts` | Effort-weighted progress and deadline risk levels. |
 
+## Milestone 2: work commands (`src/server`)
+
+Each command loads the actor, checks the plan's rules, and writes in one transaction with the actor and reason set for the audit log.
+
+| File | Commands |
+| --- | --- |
+| `goals.ts` | `createGoal`, `transferGoal` (freezes progress and overdue status, notifies the owner), `requestTeamExtension` |
+| `subtasks.ts` | `createSubtask` (team deadline, minimum lead time, reference effort, warnings), `changeEstimate`, `extendDeadline`, `requestMoreTime`, `reassign` (credit stays with the first employee), `splitSubtask`, `mergeSubtasks`, `setStatus` (review flow, reopen counts against the deliverer), `updateProgress` |
+| `requests.ts` | `decideChangeRequest` (never by the requester), `escalateRefusedRequest` |
+| `blockers.ts` | `raiseBlocker`, `acknowledgeBlocker`, `disputeBlocker`, `decideBlocker` (manager only), `resolveBlocker`, `escalateLongBlockers` (scheduled job) |
+| `policy.ts` | Who can do what, per role and team |
+
 ## Running
 
 ```sh
@@ -32,7 +44,7 @@ SELECT set_config('app.actor_id', '<user uuid>', true), set_config('app.reason',
 
 ## Next milestones
 
-2. Work: goals, transfers, subtasks, revisions with approvals, status events, blockers (API + UI).
+2. Work: goals, transfers, subtasks, revisions with approvals, status events, blockers (commands done; screens come with milestone 5).
 3. Ratings and scoring: rubric forms, collaboration form, nightly score job, breakdown page, quarter lock.
 4. Disputes and approvals.
 5. Dashboards per role, risk job and notifications, accountability reports, export.
