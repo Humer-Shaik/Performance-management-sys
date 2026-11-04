@@ -27,6 +27,7 @@ Each command loads the actor, checks the plan's rules, and writes in one transac
 | `blockers.ts` | `raiseBlocker`, `acknowledgeBlocker`, `disputeBlocker`, `decideBlocker` (manager only), `resolveBlocker`, `escalateLongBlockers` (scheduled job) |
 | `policy.ts` | Who can do what, per role and team |
 | `ratings.ts` | `rateQuality` (evidence rules for 1, 2, 4, 5), `changeQualityRating` (new version with reason, employee told), `reviewQualityRating` (manager), `rateCollaboration` (lead or teammates, examples required, raters never shown) |
+| `disputes.ts` | `fileDispute` (affected employee only, 14-day window, challenged person and reviewer found from the record), `decideDispute` (never the challenged person; applies the correction as a new revision), `rescoreAfterDisputes` (revised locked score, old one kept), `escalateOverdueDisputes` (to head of HR after 10 working days) |
 | `scoring.ts` | `openPeriod` (HR), `computeDrafts` (nightly), `lockPeriod` (quarter end), `scoreBreakdown` (who may see it). Runs as `pms_scoring`, the only role that can write scores. |
 
 ## Running
@@ -48,5 +49,5 @@ SELECT set_config('app.actor_id', '<user uuid>', true), set_config('app.reason',
 
 2. Work: goals, transfers, subtasks, revisions with approvals, status events, blockers (commands done; screens come with milestone 5).
 3. Ratings and scoring: rubric forms, collaboration form, nightly score job, breakdown page, quarter lock.
-4. Disputes and approvals.
+4. Disputes and approvals (done; screens come with milestone 5).
 5. Dashboards per role, risk job and notifications, accountability reports, export.
